@@ -298,21 +298,39 @@ d.addEventListener('click',function(e){if(!e.target.closest('#fab'))f.classList.
 (function(){var d=document;var E1=d.getElementById('mapEU'),E2=d.getElementById('mapWorld');if(!E1&&!E2)return;
 function css(h){if(d.querySelector('link[href="'+h+'"]'))return;var l=d.createElement('link');l.rel='stylesheet';l.href=h;d.head.appendChild(l);}
 function js(src,cb,fail){var s=d.createElement('script');s.src=src;s.onload=cb;s.onerror=fail;d.head.appendChild(s);}
+
 var TILES=[
- {n:'Esri',u:'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',o:{attribution:'© Esri'}},
- {n:'高德',u:'https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}',o:{subdomains:'1234',attribution:'© 高德地图'}},
- {n:'OSM',u:'https://tile.openstreetmap.org/{z}/{x}/{y}.png',o:{attribution:'© OpenStreetMap'}}];
-function base(map,note){var k=0,layer=null,ok=0,bad=0,timer;
- function use(i){if(layer)map.removeLayer(layer);k=i;ok=0;bad=0;var t=TILES[i];layer=L.tileLayer(t.u,Object.assign({maxZoom:18,crossOrigin:true},t.o)).addTo(map);
+ {n:'Esri 街道',u:'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',o:{attribution:'© Esri'}},
+ {n:'Esri 地形',u:'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',o:{attribution:'© Esri'}},
+ {n:'Esri 国家地理风格',u:'https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}',o:{attribution:'© Esri, National Geographic',maxZoom:16}},
+ {n:'Esri 卫星',u:'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',o:{attribution:'© Esri, Maxar'}},
+ {n:'高德 街道（中国大陆快）',u:'https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}',o:{subdomains:'1234',attribution:'© 高德地图'}},
+ {n:'高德 卫星',u:'https://webst0{s}.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}',o:{subdomains:'1234',attribution:'© 高德地图'}},
+ {n:'OpenStreetMap',u:'https://tile.openstreetmap.org/{z}/{x}/{y}.png',o:{attribution:'© OpenStreetMap'}},
+ {n:'OSM 人道主义',u:'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',o:{subdomains:'abc',attribution:'© OpenStreetMap, HOT'}},
+ {n:'OpenTopoMap 地形',u:'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',o:{subdomains:'abc',attribution:'© OpenTopoMap',maxZoom:17}},
+ {n:'CyclOSM',u:'https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png',o:{subdomains:'abc',attribution:'© CyclOSM, OpenStreetMap'}}];
+function base(map,note){var k=0,layer=null,ok=0,bad=0,timer,manual=false,ls;try{ls=localStorage}catch(e){}
+ var saved=null;try{saved=ls&&ls.getItem('hc-tiles');}catch(e){}
+ var idx=TILES.map(function(t){return t.n;}).indexOf(saved);
+ function use(i,byUser){if(layer)map.removeLayer(layer);k=i;ok=0;bad=0;manual=!!byUser;var t=TILES[i];
+  layer=L.tileLayer(t.u,Object.assign({maxZoom:18,crossOrigin:true},t.o)).addTo(map);sel.value=i;
   note.textContent='底图：'+t.n+' · 载入中…';
   layer.on('tileload',function(){ok++;if(ok===4)note.textContent='底图：'+t.n;});
   layer.on('tileerror',function(){bad++;if(bad>=4&&ok<2)next();});
   clearTimeout(timer);timer=setTimeout(function(){if(ok<2)next();},5000);}
- function next(){if(k+1<TILES.length)use(k+1);else{note.textContent='在线底图暂不可用，请参看上方示意图';}}
- use(0);}
+ function next(){var n=(k+1)%TILES.length;if(n===(idx>=0?idx:0)){note.textContent='在线底图暂不可用，请参看示意图或稍后切换底图';return;}note.textContent=TILES[k].n+' 无响应，自动切换…';use(n);}
+ var C=L.Control.extend({options:{position:'topright'},onAdd:function(){var dv=L.DomUtil.create('div','tilepick');
+   dv.innerHTML='<label>🗺️ 底图</label>';sel=L.DomUtil.create('select','',dv);
+   TILES.forEach(function(t,i){var o=document.createElement('option');o.value=i;o.textContent=t.n;sel.appendChild(o);});
+   L.DomEvent.disableClickPropagation(dv);L.DomEvent.disableScrollPropagation(dv);
+   sel.addEventListener('change',function(){use(+sel.value,true);try{ls&&ls.setItem('hc-tiles',TILES[+sel.value].n);}catch(e){}
+     document.querySelectorAll('.tilepick select').forEach(function(s){if(s!==sel&&s._use)s._use(+sel.value);});});
+   sel._use=function(i){use(i,true);};return dv;}});
+ var sel;map.addControl(new C());use(idx>=0?idx:0);}
 function pin(c,t){return L.divIcon({className:'',html:'<div class="pin11 '+c+'"><span>'+t+'</span></div>',iconSize:[30,30],iconAnchor:[15,30],popupAnchor:[0,-28]});}
 function init(){
- if(E1){var ev=JSON.parse(d.getElementById('evData').textContent);var m=L.map(E1,{scrollWheelZoom:false,zoomSnap:.5}).setView([50.2,8.5],5.5);base(m,d.getElementById('mapEUnote'));
+ if(E1){var ev=JSON.parse(d.getElementById('evData').textContent);var m=L.map(E1,{scrollWheelZoom:false,zoomSnap:1}).setView([50.2,8.5],innerWidth<700?4:5);base(m,d.getElementById('mapEUnote'));
   var seen={},mk=[];ev.forEach(function(e,i){var key=e.p;var html='<b>'+e.y+' · '+e.t+'</b><br>📍 '+e.p+'<br>'+e.x;
    if(seen[key]){seen[key].m.bindPopup(seen[key].h+='<hr style="border:0;border-top:1px dashed #ccc">'+html);mk[i]=seen[key].m;return;}
    var mm=L.marker([e.la,e.lo],{icon:pin(e.c,i+1)}).addTo(m).bindPopup(html);seen[key]={m:mm,h:html};mk[i]=mm;});
@@ -349,6 +367,14 @@ var cur='var(--royal)';
   if(!el.querySelector('.t')){var sp=d.createElement('span');sp.className='t';[].slice.call(el.childNodes).forEach(function(n){if(n.nodeType===3||(n.nodeType===1&&!/\b(no|emo|qr)\b/.test(n.className)))sp.appendChild(n);});
    var qr=el.querySelector('.qr');if(qr)el.insertBefore(sp,qr);else el.appendChild(sp);}
   el.title=el.textContent.replace(/\s+/g,' ').trim();}});
+})();
+
+(function(){var d=document,lg=d.getElementById('mkLegend');if(!lg)return;
+lg.querySelectorAll('.mkl').forEach(function(c){var m=c.querySelector('mark');if(m){var k=[].filter.call(m.classList,function(x){return x!=='mk'&&x.indexOf('mk-')===0;})[0];if(k){c.dataset.c=k;c.title='只看「'+m.textContent+'」这一类（再点取消）';}}});
+var h=d.createElement('span');h.className='mkhint';h.textContent='点类别 → 只看这一类';var btn=d.getElementById('mkBtn');lg.insertBefore(h,btn);
+lg.addEventListener('click',function(e){var c=e.target.closest('.mkl[data-c]');if(!c)return;var k=c.dataset.c,on=d.body.dataset.mkf===k;
+ lg.querySelectorAll('.mkl.on').forEach(function(x){x.classList.remove('on');});
+ if(on){delete d.body.dataset.mkf;}else{d.body.dataset.mkf=k;c.classList.add('on');}});
 })();
 
 }catch(e){console.error(e)}

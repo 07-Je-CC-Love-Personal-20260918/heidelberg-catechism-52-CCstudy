@@ -20,6 +20,7 @@ import ui8
 import ui9
 import ui10
 import ui11
+import ui12
 ui7.patch(C, C2)
 ui3.patch_lds(LDS)
 
@@ -162,7 +163,7 @@ def build():
             w('<div class="toc-h">%s · %s</div>' % (E(d["part"]), PL[d["part"]]))
         w('<a href="#ld%d" data-n="%d"><span class="no">%d</span><span class="emo">%s</span>%s<span class="qr">(%s问)</span></a>' % (d["n"], d["n"], d["n"], ui4.EMO[d["n"] - 1], E(d["title"]), ("%d-%d" % (d["qas"][0][0], d["qas"][-1][0])) if len(d["qas"]) > 1 else d["qas"][0][0]))
     w('<div class="toc-h">历史 · 地图 · 文化</div>'
-      '<a href="#hist-intro"><span class="no">史</span>一部要理诞生的现场</a><a href="#hist-map"><span class="no">图</span>互动时间线 × 真实地图</a>'
+      '<a href="#hist-intro"><span class="no">史</span>一部要理诞生的现场</a><a href="#hist-scene"><span class="no">景</span>情景图：1563 年的海德堡</a><a href="#hist-sunday"><span class="no">用</span>讲解图：一个主日下午</a><a href="#hist-map"><span class="no">图</span>互动时间线 × 真实地图</a>'
       '<a href="#hist-rhine"><span class="no">河</span>莱茵走廊示意图</a><a href="#hist-world"><span class="no">世</span>全球传播地图</a><a href="#hist-culture"><span class="no">文</span>文化区域对照</a>')
     w('<div class="toc-h">跨主日专题 · TOPICA</div>')
     for t in TOPICS:
@@ -273,7 +274,9 @@ def build():
           "正面只给图标与题目，先自己说出本质核心，再翻面核对「重点 · 记忆钥匙 · 今日应用」。勾选过「已背熟」的主日在下方进度条显示为金色，可只练未背熟的。",
           ui6.flashcards(LDS, E)))
 
-    w(ui11.history_sections())
+    _hs = ui11.history_sections()
+    _i = _hs.index('<section class="sec histsec" id="hist-map">')
+    w(_hs[:_i] + ui12.scene_sections() + _hs[_i:])
 
     # ---------- 52 主日 ----------
     last = None

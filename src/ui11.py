@@ -156,21 +156,9 @@ HIST_JS = r"""
 (function(){var d=document;var E1=d.getElementById('mapEU'),E2=d.getElementById('mapWorld');if(!E1&&!E2)return;
 function css(h){if(d.querySelector('link[href="'+h+'"]'))return;var l=d.createElement('link');l.rel='stylesheet';l.href=h;d.head.appendChild(l);}
 function js(src,cb,fail){var s=d.createElement('script');s.src=src;s.onload=cb;s.onerror=fail;d.head.appendChild(s);}
-var TILES=[
- {n:'Esri',u:'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',o:{attribution:'© Esri'}},
- {n:'高德',u:'https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}',o:{subdomains:'1234',attribution:'© 高德地图'}},
- {n:'OSM',u:'https://tile.openstreetmap.org/{z}/{x}/{y}.png',o:{attribution:'© OpenStreetMap'}}];
-function base(map,note){var k=0,layer=null,ok=0,bad=0,timer;
- function use(i){if(layer)map.removeLayer(layer);k=i;ok=0;bad=0;var t=TILES[i];layer=L.tileLayer(t.u,Object.assign({maxZoom:18,crossOrigin:true},t.o)).addTo(map);
-  note.textContent='底图：'+t.n+' · 载入中…';
-  layer.on('tileload',function(){ok++;if(ok===4)note.textContent='底图：'+t.n;});
-  layer.on('tileerror',function(){bad++;if(bad>=4&&ok<2)next();});
-  clearTimeout(timer);timer=setTimeout(function(){if(ok<2)next();},5000);}
- function next(){if(k+1<TILES.length)use(k+1);else{note.textContent='在线底图暂不可用，请参看上方示意图';}}
- use(0);}
-function pin(c,t){return L.divIcon({className:'',html:'<div class="pin11 '+c+'"><span>'+t+'</span></div>',iconSize:[30,30],iconAnchor:[15,30],popupAnchor:[0,-28]});}
+/*TILES*/function pin(c,t){return L.divIcon({className:'',html:'<div class="pin11 '+c+'"><span>'+t+'</span></div>',iconSize:[30,30],iconAnchor:[15,30],popupAnchor:[0,-28]});}
 function init(){
- if(E1){var ev=JSON.parse(d.getElementById('evData').textContent);var m=L.map(E1,{scrollWheelZoom:false,zoomSnap:.5}).setView([50.2,8.5],5.5);base(m,d.getElementById('mapEUnote'));
+ if(E1){var ev=JSON.parse(d.getElementById('evData').textContent);var m=L.map(E1,{scrollWheelZoom:false,zoomSnap:1}).setView([50.2,8.5],innerWidth<700?4:5);base(m,d.getElementById('mapEUnote'));
   var seen={},mk=[];ev.forEach(function(e,i){var key=e.p;var html='<b>'+e.y+' · '+e.t+'</b><br>📍 '+e.p+'<br>'+e.x;
    if(seen[key]){seen[key].m.bindPopup(seen[key].h+='<hr style="border:0;border-top:1px dashed #ccc">'+html);mk[i]=seen[key].m;return;}
    var mm=L.marker([e.la,e.lo],{icon:pin(e.c,i+1)}).addTo(m).bindPopup(html);seen[key]={m:mm,h:html};mk[i]=mm;});
@@ -374,3 +362,9 @@ var cur='var(--royal)';
 """
 CSS11 += TOC2_CSS
 JS11 += TOC2_JS
+
+import ui12 as _u12
+HIST_JS = HIST_JS.replace("/*TILES*/", _u12.TILES_JS)
+JS11 = JS11.replace("/*TILES*/", _u12.TILES_JS)
+JS11 += _u12.JS12
+CSS11 += _u12.CSS12

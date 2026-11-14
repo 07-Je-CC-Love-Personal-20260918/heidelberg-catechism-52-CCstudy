@@ -16,7 +16,7 @@ RX = re.compile("|".join(re.escape(w) for w, c in TERMS))
 CLS = dict(TERMS)
 VERSE = re.compile(r'((?:创|出|利|民|申|书|士|得|撒上|撒下|王上|王下|代上|代下|拉|尼|斯|伯|诗|箴|传|歌|赛|耶|哀|结|但|何|珥|摩|俄|拿|弥|鸿|哈|番|该|亚|玛|太|可|路|约|徒|罗|林前|林后|加|弗|腓|西|帖前|帖后|提前|提后|多|门|来|雅|彼前|彼后|约一|约二|约三|约壹|约贰|约叁|犹|启)\s?\d{1,3}:\d{1,3}(?:[–-]\d{1,3})?)')
 SKIP = {"script", "style", "svg", "h1", "h2", "h3", "a", "button", "summary", "figcaption", "label", "title", "textarea", "option", "sup", "nav", "header"}
-SKIP_CLS = re.compile(r'class="(?:[^"]*\s)?(?:qn|q|vchip|vchips|ld-meta|badge|toc|mw|g52|hm|mapleg|refs|srcnote|cfa|tl|rph|rlat|rtab|eyebrow|act3|stats|zbtn|qbar|reader|mklegend|fc-[\w-]*|tr-[\w-]*|terms|term|foot)(?=[\s"])')
+SKIP_CLS = re.compile(r'class="(?:[^"]*\s)?(?:qn|q|vchip|vchips|ld-meta|badge|toc|mw|g52|hm|mapleg|refs|srcnote|cfa|tl|rph|rlat|rtab|eyebrow|act3|stats|zbtn|qbar|reader|mklegend|fc-[\w-]*|tr-[\w-]*|terms|term|foot|nomk)(?=[\s"])')
 
 
 def _mark_text(t):

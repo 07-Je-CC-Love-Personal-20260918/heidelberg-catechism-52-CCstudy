@@ -1265,6 +1265,46 @@ body.drill .drillbar{display:flex;position:sticky;top:calc(var(--tbh) + 6px);z-i
 .toc-h{color:var(--tc,var(--muted))!important;border-bottom-color:color-mix(in srgb,var(--tc,var(--rule)) 40%,transparent)!important}
 .toc a.done .t::after{content:" ✓";color:var(--gratitude)}
 
+/* ===== v14 底图切换器 ===== */
+.tilepick{background:color-mix(in srgb,var(--paper-2) 94%,transparent);border:1px solid var(--rule);border-radius:12px;padding:5px 8px;box-shadow:0 6px 18px -8px rgba(0,0,0,.35);
+ display:flex;align-items:center;gap:6px;font:600 12.5px var(--sans);color:var(--ink-2)}
+.tilepick select{font:500 12.5px var(--sans);border:1px solid var(--rule);border-radius:8px;padding:3px 4px;background:var(--paper);color:var(--ink);max-width:170px}
+@media (max-width:560px){.tilepick label{display:none}.tilepick select{max-width:128px}}
+/* 情景图 */
+.sc14{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:14px;align-items:start}
+@media (max-width:900px){.sc14{grid-template-columns:1fr}}
+.scene14{border-radius:16px;box-shadow:var(--sh2)}
+.cloud14 ellipse{fill:#fff;opacity:.9}
+.cloud14{animation:drift14 26s linear infinite}.cloud14.c2{animation-duration:34s;animation-delay:-10s}
+@keyframes drift14{from{transform:translateX(-160px)}to{transform:translateX(980px)}}
+.ripple14{stroke-dasharray:30 40;animation:flowmv 2.4s linear infinite}
+.pin14 circle{fill:#D2283E;stroke:#fff;stroke-width:3}.pin14 text{font:800 15px var(--sans);fill:#fff;text-anchor:middle}
+.pin14{animation:pop .5s both}.lab14{font:12px var(--sans);fill:#6b5d45}
+.sclist{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.sclist li{border-radius:12px;padding:10px 12px;background:var(--paper-2);border:1px solid var(--rule);animation:rise .5s both;animation-delay:calc(var(--i)*.07s)}
+.sclist b{display:flex;align-items:center;gap:6px;font-size:15.5px}
+.sn14{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#D2283E;color:#fff;font:800 12px var(--sans)}
+.sclist p{margin:4px 0 0;font-size:.93em;line-height:1.7;color:var(--ink-2)}
+/* 讲解流程 */
+.aflow{display:flex;flex-wrap:wrap;align-items:stretch;gap:8px}
+.af14{flex:1 1 150px;border-radius:14px;padding:12px 14px;background:linear-gradient(150deg,color-mix(in srgb,var(--gratitude) 16%,var(--paper-2)),var(--paper-2));
+ border:1px solid color-mix(in srgb,var(--gratitude) 35%,var(--rule));animation:rise .5s both;animation-delay:calc(var(--i)*.1s)}
+.af14 em{font-style:normal;font-size:26px}.af14 b{display:block;margin-top:2px;color:var(--brass);font-size:15px}.af14 p{margin:4px 0 0;font-size:.92em;line-height:1.65}
+.af-ar{align-self:center;font-style:normal;font-weight:800;color:var(--brass)}
+@media (max-width:640px){.af-ar{display:none}.af14{flex-basis:100%}}
+/* ===== v14 标记按类聚焦 ===== */
+.mklegend .mkl{cursor:pointer;border-radius:8px;padding:2px 4px;transition:background .2s,opacity .2s}
+.mklegend .mkl:hover{background:color-mix(in srgb,var(--royal) 8%,transparent)}
+.mklegend .mkl.on{background:color-mix(in srgb,var(--royal) 14%,transparent);box-shadow:inset 0 0 0 1.5px var(--royal)}
+.mkhint{font:12px var(--sans);color:var(--muted)}
+body[data-mkf] mark.mk{opacity:.38;filter:grayscale(.7)}
+body[data-mkf="mk-god"] mark.mk-god,body[data-mkf="mk-sin"] mark.mk-sin,body[data-mkf="mk-chr"] mark.mk-chr,body[data-mkf="mk-spi"] mark.mk-spi,
+body[data-mkf="mk-cov"] mark.mk-cov,body[data-mkf="mk-key"] mark.mk-key,body[data-mkf="mk-gra"] mark.mk-gra{opacity:1;filter:none;outline:2px solid currentColor;outline-offset:1px}
+
+/* 经文出处：长串经文在栏内换行，不越栏 */
+details.refs ol li{overflow-wrap:anywhere;word-break:break-word;break-inside:avoid;min-width:0}
+details.refs ol{column-gap:22px}
+
 /* ===== v10：原生页面过渡（View Transitions）· 页面导航条 · 一页纸要点 ===== */
 @view-transition{navigation:auto}
 ::view-transition-old(root){animation:vt-out .28s cubic-bezier(.4,0,.2,1) both}
