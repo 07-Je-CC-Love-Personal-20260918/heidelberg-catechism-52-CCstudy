@@ -1362,3 +1362,44 @@ details.refs ol{column-gap:22px}
 .sres a i{font-style:normal;font-size:13.5px;color:var(--ink-2);line-height:1.6}
 .sres mark{background:color-mix(in srgb,var(--gratitude) 35%,transparent);color:inherit;border-radius:3px;padding:0 1px}
 .sres .sh{font-family:var(--sans);font-size:12px;color:var(--muted);padding:6px 12px}
+
+/* ===== v15 三级目录 ===== */
+.toc3{padding:6px 8px 40px;font-family:var(--sans)}
+.toc3 a{--tc:inherit!important}
+.toc3 a{display:flex!important;align-items:center;gap:6px;min-width:0;white-space:nowrap;text-decoration:none;color:var(--ink-2);border-radius:8px;border-left:3px solid transparent;
+ transition:background .18s,color .18s,border-color .18s}
+.toc3 a .t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.toc3 a .emo,.toc3 a .qr,.toc3 a .n1,.toc3 a .no3{flex:none}
+.toc3 .th1,.toc3 .th2{display:flex;align-items:center;gap:2px}
+.toc3 .tg{flex:none;width:22px;height:22px;border:0;background:none;cursor:pointer;border-radius:6px;display:grid;place-items:center;color:var(--tc);padding:0}
+.toc3 .tg::before{content:"";width:7px;height:7px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(-45deg);transition:transform .22s}
+.toc3 .open>.th1 .tg::before,.toc3 .open>.th2 .tg::before{transform:rotate(45deg)}
+.toc3 .tg:hover{background:color-mix(in srgb,var(--tc) 14%,transparent)}
+.toc3 .tgx{flex:none;width:22px}
+/* 一级 */
+.toc3 .t1{margin:4px 0;border-radius:12px}
+.toc3 .t1.open{background:color-mix(in srgb,var(--tc) 6%,transparent)}
+.toc3 .l1{flex:1;padding:7px 8px;font-size:15px;font-weight:800;color:var(--tc)}
+.toc3 .n1{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--tc);color:#fff;font-size:12px;font-weight:800}
+.toc3 .l1 .qr{font-size:11px;font-weight:600;color:var(--muted);background:var(--paper-3);border-radius:99px;padding:1px 7px}
+.toc3 .tb1,.toc3 .tb2{display:none}
+.toc3 .open>.tb1,.toc3 .open>.tb2{display:block;animation:fadein .2s ease}
+/* 二级 */
+.toc3 .t2{margin-left:14px;border-left:1.5px solid color-mix(in srgb,var(--tc) 22%,transparent)}
+.toc3 .l2{flex:1;padding:5px 8px;font-size:14px}
+.toc3 .l2 .qr{font-size:11px;color:var(--muted)}
+/* 三级 */
+.toc3 .tb2{margin-left:24px}
+.toc3 .l3{padding:3px 8px;font-size:12.5px;color:var(--muted)}
+.toc3 .no3{font-weight:700;color:var(--tc);font-size:11.5px;min-width:3.2em}
+.toc3 a:hover{background:color-mix(in srgb,var(--tc) 10%,transparent);color:var(--tc);border-left-color:color-mix(in srgb,var(--tc) 45%,transparent)}
+.toc3 a.active{background:linear-gradient(90deg,color-mix(in srgb,var(--tc) 22%,transparent),color-mix(in srgb,var(--tc) 3%,transparent))!important;
+ color:var(--tc)!important;border-left-color:var(--tc)!important;font-weight:700}
+.toc3 a.done .t::after{content:" ✓";color:var(--gratitude)}
+.toc3 .t2.cur>.th2 .l2{color:var(--tc);font-weight:700}
+.toc3 .ttools{display:flex;gap:6px;margin:2px 4px 8px}
+.toc3 .ttools button{flex:1;font:600 12px var(--sans);padding:5px 8px;border-radius:8px;border:1px solid var(--rule);background:var(--paper);color:var(--ink-2);cursor:pointer}
+.toc3 .ttools button:hover{color:var(--royal);border-color:var(--royal)}
+/* 触屏：去毛玻璃、减阴影，滚动更轻 */
+@media (pointer:coarse){.topbar,.glass,.side{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+ .topbar{background:color-mix(in srgb,var(--paper) 96%,transparent)!important}.tile,.qa,.kb,.mw{box-shadow:none!important}}

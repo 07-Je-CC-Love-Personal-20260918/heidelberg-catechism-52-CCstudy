@@ -176,14 +176,16 @@ def split(h, LDS, EMO, outdir):
     LDS_by_n = {d["n"]: d for d in LDS}
     # 1) 抽出样式与脚本到共享文件
     styles = re.findall(r'<style>(.*?)</style>', h, flags=re.S)
-    css = fix_css('\n'.join(styles) + VT_CSS)
+    import ui13 as _u13
+    css = fix_css('\n'.join(styles) + VT_CSS + _u13.CSS13)
     import shutil
     shutil.copytree(os.path.join(os.path.dirname(os.path.abspath(__file__)), "vendor", "leaflet"), os.path.join(outdir, "assets", "leaflet"), dirs_exist_ok=True)
     h = re.sub(r'<style>.*?</style>', '', h, flags=re.S)
     scripts = [s for s in re.findall(r'<script>(.*?)</script>', h, flags=re.S)]
     big = max(scripts, key=len)
     h = h.replace('<script>%s</script>' % big, '')
-    js = big + SEARCH_JS
+    import ui13 as _u13j
+    js = big + SEARCH_JS + 'try{' + _u13j.JS13 + '\n}catch(e){console.error(e)}'
     open(os.path.join(outdir, "assets", "site.css"), "w", encoding="utf-8").write(css)
     open(os.path.join(outdir, "assets", "site.js"), "w", encoding="utf-8").write(js)
     # 2) 拆分 main
@@ -235,6 +237,9 @@ def split(h, LDS, EMO, outdir):
                 where.setdefault(i, f)
     for i in re.findall(r'\sid="([^"]+)"', head + tail):
         where.setdefault(i, None)  # 全局元素
+    import ui13
+    global LAST_S
+    S13 = LAST_S = ui13.structure(pages, PAGES, LDS, EMO)
     # 5) 组装每页
     out = {}
     order = [p[0] for p in PAGES]
@@ -272,6 +277,8 @@ def split(h, LDS, EMO, outdir):
             if w and w != f:
                 return '%shref="%s#%s"' % (m.group(1), w, i)
             return m.group(0)
+        import ui13
+        page = ui13.apply(page, S13, f)
         page = re.sub(r'(\s)href="#([^"]+)"', fix, page)
         # 目录：标记本页
         out[f] = page
@@ -279,7 +286,8 @@ def split(h, LDS, EMO, outdir):
 
 
 def fix_texts(t, where):
-    import ui11
+    import ui11, ui13
+    t = ui13.apply(t, LAST_S, 'texts.html')
     t = re.sub(r'<style>(.*?)</style>', lambda m: '<style>' + fix_css(m.group(1)) + '</style>', t, count=1, flags=re.S)
     t = t.replace('</main></div>', '</main></div>' + ui11.FAB_HTML, 1)
     def rep(m):

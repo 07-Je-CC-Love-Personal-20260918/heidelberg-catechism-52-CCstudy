@@ -37,8 +37,8 @@ def render_ld(d, A, PL):
     qn = "问 %d" % q0 if q0 == q1 else "问 %d–%d" % (q0, q1)
     left = (q0 - 1) / 129 * 100
     wid = max((q1 - q0 + 1) / 129 * 100, 1.2)
-    qas = ''.join('<div class="qa"><div class="qn">%s第 %d 问</div><div class="q">%s</div>'
-                  '<p class="a">%s</p>%s</div>' % (ic("mic", "ic s"), n, E(HC[n]["q"]), fn_html(HC[n]["a"]),
+    qas = ''.join('<div class="qa" id="q%d"><div class="qn">%s第 %d 问</div><div class="q">%s</div>'
+                  '<p class="a">%s</p>%s</div>' % (n, ic("mic", "ic s"), n, E(HC[n]["q"]), fn_html(HC[n]["a"]),
                                                     refs_html(HC[n]["refs"])) for n, _, _ in d["qas"])
     terms = ''.join('<div class="term"><span class="%s">%s</span><span class="tgloss">%s%s</span></div>'
                     % (cls, E(t), '' if tr == "—" else '<i>%s</i>' % E(tr), E(gl))
@@ -232,7 +232,7 @@ def texts_page(CSS, CSS2, ICONS, LDS, PL):
             '包括其脚注编号（以上标显示）与经文出处。只作排版，不改一字。</p>%s</header>%s'
             '<footer class="srcfoot">文本来源：<a href="%s">ccifellowship.org</a> · 排版：海德堡 52 主日学习站<span class="vstamp">%s</span></footer>'
             '</main></div><script>%s</script></body></html>'
-            % (CSS, CSS2, CSS3, ICONS, ''.join(nav), SRC, forms_stats(), ''.join(body), SRC, __import__('ui5').VERSION, TEXTS_JS + __import__('ui5').JS5 + __import__('ui9').JS9 + __import__('ui11').THEME_JS + __import__('ui11').TOC_JS + __import__('ui11').FAB_JS + __import__('ui11').TOC2_JS))
+            % (CSS, CSS2, CSS3, ICONS, ''.join(nav), SRC, forms_stats(), ''.join(body), SRC, __import__('ui5').VERSION, TEXTS_JS + __import__('ui5').JS5 + __import__('ui9').JS9 + __import__('ui11').THEME_JS + __import__('ui11').TOC_JS + __import__('ui11').FAB_JS + __import__('ui11').TOC2_JS + __import__('ui13').JS13))
 
 
 TEXTS_JS = r"""

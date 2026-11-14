@@ -54,7 +54,7 @@ var _dc=d.getElementById('doneCount');if(_dc)_dc.textContent=Object.keys(DONE).l
 
 /* ---- scroll spy (rAF + getBoundingClientRect) ---- */
 var secs=[].slice.call(d.querySelectorAll('section[id]'));
-var links={};d.querySelectorAll('.toc a').forEach(function(a){links[a.getAttribute('href').slice(1)]=a;});
+var links={};d.querySelectorAll('.toc a').forEach(function(a){var h=a.getAttribute('href')||'';if(h.charAt(0)==='#')links[h.slice(1)]=a;});
 var side=d.querySelector('.side'),cur=null,tick=false;
 function spy(){
   tick=false;var best=null,bd=1e9;
@@ -69,9 +69,7 @@ function spy(){
     cur=best.id;
     var a=links[cur];
     d.querySelectorAll('.toc a.active').forEach(function(x){x.classList.remove('active');});
-    if(a){a.classList.add('active');
-      if(a.offsetTop<side.scrollTop||a.offsetTop>side.scrollTop+side.clientHeight-70)
-        side.scrollTop=a.offsetTop-side.clientHeight/2;}
+    if(a){a.classList.add('active');if(window.__tocAct)window.__tocAct(a);}
   }
   d.getElementById('toTop').classList.toggle('show',window.scrollY>700);
 }

@@ -53,7 +53,7 @@ var _dc=d.getElementById('doneCount');if(_dc)_dc.textContent=Object.keys(DONE).l
 
 /* ---- scroll spy (rAF + getBoundingClientRect) ---- */
 var secs=[].slice.call(d.querySelectorAll('section[id]'));
-var links={};d.querySelectorAll('.toc a').forEach(function(a){links[a.getAttribute('href').slice(1)]=a;});
+var links={};d.querySelectorAll('.toc a').forEach(function(a){var h=a.getAttribute('href')||'';if(h.charAt(0)==='#')links[h.slice(1)]=a;});
 var side=d.querySelector('.side'),cur=null,tick=false;
 function spy(){
   tick=false;var best=null,bd=1e9;
@@ -68,9 +68,7 @@ function spy(){
     cur=best.id;
     var a=links[cur];
     d.querySelectorAll('.toc a.active').forEach(function(x){x.classList.remove('active');});
-    if(a){a.classList.add('active');
-      if(a.offsetTop<side.scrollTop||a.offsetTop>side.scrollTop+side.clientHeight-70)
-        side.scrollTop=a.offsetTop-side.clientHeight/2;}
+    if(a){a.classList.add('active');if(window.__tocAct)window.__tocAct(a);}
   }
   d.getElementById('toTop').classList.toggle('show',window.scrollY>700);
 }
@@ -393,3 +391,27 @@ function run(){var v=box.value.trim().toLowerCase();if(!v){panel.classList.remov
 box.addEventListener('keydown',function(e){if(e.key==='Escape'){panel.classList.remove('on');box.blur();}if(e.key==='Enter'){var a=panel.querySelector('a');if(a){location.href=a.getAttribute('href');panel.classList.remove('on');}}});
 d.addEventListener('click',function(e){if(!e.target.closest('.sres')&&e.target!==box)panel.classList.remove('on');if(e.target.closest('.sres a'))panel.classList.remove('on');});
 })();
+try{
+(function(){var d=document,T=d.getElementById('toc3');if(!T)return;var side=d.querySelector('.side');
+var tools=d.createElement('div');tools.className='ttools';tools.innerHTML='<button type="button" data-x="1">全部展开</button><button type="button" data-x="0">全部折叠</button><button type="button" data-x="c">只看当前</button>';
+T.insertBefore(tools,T.firstChild);
+function setOpen(el,v){el.classList.toggle('open',v);}
+T.addEventListener('click',function(e){var b=e.target.closest('.tg');if(b){e.preventDefault();var p=b.parentElement.parentElement;setOpen(p,!p.classList.contains('open'));return;}
+ var x=e.target.closest('.ttools button');if(x){var k=x.dataset.x;
+  if(k==='1')T.querySelectorAll('.t1,.t2.has').forEach(function(z){setOpen(z,true);});
+  else if(k==='0')T.querySelectorAll('.t1,.t2').forEach(function(z){setOpen(z,false);});
+  else{T.querySelectorAll('.t1,.t2').forEach(function(z){setOpen(z,false);});var a=T.querySelector('a.active');if(a)reveal(a);else{var h=T.querySelector('.t1[data-f="'+(location.pathname.split('/').pop()||'index.html')+'"]');if(h)setOpen(h,true);}}}});
+function reveal(a){var t2=a.closest('.t2'),t1=a.closest('.t1');if(t1)setOpen(t1,true);if(t2&&t2.classList.contains('has')){setOpen(t2,true);}
+ T.querySelectorAll('.t2.cur').forEach(function(z){z.classList.remove('cur');});if(t2)t2.classList.add('cur');
+ var r=a.getBoundingClientRect(),s=side.getBoundingClientRect();if(r.top<s.top+60||r.bottom>s.bottom-40)side.scrollTop+=r.top-s.top-s.height/2;}
+window.__tocAct=function(a){if(!a||!T.contains(a))return;var prev=T.querySelector('.t2.cur.has');var nt2=a.closest('.t2');if(prev&&prev!==nt2)setOpen(prev,false);reveal(a);};
+/* 当前问号（三级）高亮 */
+var qs=[].slice.call(d.querySelectorAll('.ld .qa[id]'));if(qs.length&&'IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){
+  T.querySelectorAll('a.l3.active').forEach(function(z){z.classList.remove('active');});var l=T.querySelector('a.l3[href="#'+en.target.id+'"]');if(l)l.classList.add('active');}});},{rootMargin:'-30% 0px -60% 0px'});qs.forEach(function(q){io.observe(q);});}
+/* 已背熟标记 */
+function done(){var s={};try{s=JSON.parse(localStorage.getItem('hc-done')||'{}');}catch(e){}T.querySelectorAll('a.l2[data-n]').forEach(function(a){a.classList.toggle('done',!!s[a.dataset.n]);});}
+done();d.addEventListener('change',function(e){if(e.target.matches('.chk input'))setTimeout(done,50);});
+if(location.hash){var a=T.querySelector('a[href="'+location.hash+'"]');if(a)setTimeout(function(){a.classList.add('active');reveal(a);},300);}
+})();
+
+}catch(e){console.error(e)}

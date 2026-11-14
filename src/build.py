@@ -427,6 +427,6 @@ if __name__ == "__main__":
         r = subprocess.run(["node", "--check", os.path.join(os.path.dirname(out), "assets", "site.js")], capture_output=True, text=True)
         if r.returncode:
             raise SystemExit("site.js 语法错误：\n" + r.stderr[:600])
-    t = ui3.texts_page(CSS, ui2.CSS2 + ui4.CSS4 + ui5.CSS5 + ui9.CSS9 + ui11.CSS11, ui2.ICONS, LDS, PL)
+    t = ui3.texts_page(CSS, ui2.CSS2 + ui4.CSS4 + ui5.CSS5 + ui9.CSS9 + ui11.CSS11 + __import__('ui13').CSS13, ui2.ICONS, LDS, PL)
     open(os.path.join(os.path.dirname(out), "texts.html"), "w", encoding="utf-8").write(ui10.fix_texts(t, WHERE))
     print("texts.html bytes:", len(t.encode("utf-8")))
